@@ -78,22 +78,30 @@ def check(puzzle):
 def fillOneEmpty(puzzle):
 	flag = 0
 	zeroPositions = [0,0]
-	numbersList = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 	#treba provera za redove
-	zeroCounter = 0
 	for i in range(9):
+		print("Flag: " + str(flag))
+		zeroCounter = 0
+		numbersList = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 		for j in range(9):
-			numbersList.remove(puzzle[i][j]) # brise broj iz liste na osnovu vrednosti
+			#print("Puzzle i i jot: " + str(puzzle[i][j]))
 			if puzzle[i][j] == 0:
 				zeroCounter += 1
 				zeroPositions[0] = i # ako ima 2 nule, desice se overwrite, medjutim nije toliko bitno jer svakako ima continue i preskocice se
 				zeroPositions[1] = j # a ako ima 1 nula, dobijamo indekse te nule i to nam treba
+			else:
+				print("Numbers list" + str(numbersList))
+				print("Broj koji se brise: " + str(puzzle[i][j]))
+				numbersList.remove(puzzle[i][j]) # brise broj iz liste na osnovu vrednosti
+		print(zeroCounter)		
 		if zeroCounter != 1:
 			continue
-		else:
+		else: # ovde udje ako ima jednu nulu u redu
 			flag = 1
-			print("Numbers list" + numbersList)
+			print("Numbers list" + str(numbersList))
 			puzzle[zeroPositions[0]][zeroPositions[1]] = numbersList[0]
+			print("3. red puzle: " + str(puzzle[2])) 
+			continue
 	#treba provera za kolone
 	#treba provera za grid
 
@@ -107,7 +115,8 @@ def solve(puzzle):
 		print("The input puzzle is incorrect.")
 	else:
 		print("The input puzzle is correct.")
-		while flag == 1 :
+		while flag == 1:
 			fillOneEmpty(puzzle)
+			print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
 		
 solve(puzzle)
