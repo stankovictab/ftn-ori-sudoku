@@ -61,12 +61,14 @@ def check(puzzle):
 				for i in range(3): # od 0 do 2
 					for j in range(3):
 						# Preskace selektovani
-						if(r == r33coordinates[i] & c == c33coordinates[j]): 
-							print("Djoka")
+						if(r == r33coordinates[i] and c == c33coordinates[j]): # and mora, ne &
+							# print("R33C[i] = " + str(r33coordinates[i]) + "   C33C[j] = " + str(c33coordinates[j]))
+							# print("puzzle[r33i,c33j] = " + str(puzzle[r33coordinates[i]][c33coordinates[j]]))
 							continue
 						# Ako nadje broj u sekciji koji je isti kao selektovani
 						if(puzzle[r33coordinates[i]][c33coordinates[j]] == selected): 
-							print("Pera")
+							# print("R33C[i] = " + str(r33coordinates[i]) + "   C33C[j] = " + str(c33coordinates[j]))
+							# print("puzzle[r33i,c33j] = " + str(puzzle[r33coordinates[i]][c33coordinates[j]]))
 							return False
 	return True
 
