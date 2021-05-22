@@ -143,8 +143,25 @@ def fillOneEmpty(puzzle):
 
 
 # Trazi redom koje je prvo mesto matrice koje je prazno, za backtracking
-def findFree(puzzle):
-	pass
+def findZero(puzzle):
+	for i in range(9): # treba da prodje kroz redove da bi nasao nule
+		for j in range(9): # treba da prodje kroz sve elemente reda
+			if puzzle[i][j] == 0:
+				return (i,j)
+		
+		
+def fillFirstZero(puzzle):
+	x, y = findZero(puzzle)
+	numbersList = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+	# Brise elemente koji se vec nalaze u datom redu
+	for i in range(9):
+		if puzzle[x][i] != 0:
+			numbersList.remove(puzzle[x][i])
+			
+	print("Ostatak elemenata: " + str(numbersList))
+				
+	
+		
 
 def solve(puzzle):
 	global flag
