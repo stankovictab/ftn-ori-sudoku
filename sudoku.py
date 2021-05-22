@@ -44,11 +44,30 @@ def check(puzzle):
 				# Koordinate sekcije, moze biti 0, 1 ili 2
 				r33 = math.floor(r / 3)
 				c33 = math.floor(c / 3)
-				for i in range(3): # od 0 do 2
-					if(i == r | i+3 == r | i+6 == r):
-						continue
-					
+				r33coordinates = [0,0,0]
+				r33coordinates[0] = r33 * 3
+				r33coordinates[1] = r33 * 3 + 1
+				r33coordinates[2] = r33 * 3 + 2
+				c33coordinates = [0,0,0]
+				c33coordinates[0] = c33 * 3
+				c33coordinates[1] = c33 * 3 + 1
+				c33coordinates[2] = c33 * 3 + 2
+				
+				for i in r33coordinates:
+					print("R33 Element: " + str(i))
+				for i in c33coordinates:
+					print("C33 Element: " + str(i))
 
+				for i in range(3): # od 0 do 2
+					for j in range(3):
+						# Preskace selektovani
+						if(r == r33coordinates[i] & c == c33coordinates[j]): 
+							print("Djoka")
+							continue
+						# Ako nadje broj u sekciji koji je isti kao selektovani
+						if(puzzle[r33coordinates[i]][c33coordinates[j]] == selected): 
+							print("Pera")
+							return False
 	return True
 
 # Trazi redom koje je prvo mesto matrice koje je prazno, za backtracking
