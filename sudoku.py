@@ -4,16 +4,16 @@ flag = 1
 
 # 0 su prazna mesta
 puzzle = [
-	[8,0,4, 1,9,2, 0,0,3],
-	[2,3,0, 0,7,0, 0,1,0],
+	[8,7,4, 1,9,2, 0,0,3],
+	[2,3,0, 0,7,0, 8,1,9],
 	[6,1,9, 3,0,8, 4,7,2],
 
-	[0,0,2, 0,0,0, 0,8,0],
+	[0,0,2, 7,0,5, 0,8,0],
 	[7,0,0, 0,1,0, 0,2,5],
 	[0,5,0, 0,2,0, 7,0,0],
 
-	[9,6,7, 0,0,1, 2,0,8],
-	[0,8,0, 2,4,0, 0,9,0],
+	[9,6,7, 5,0,1, 2,4,8],
+	[0,8,0, 2,4,7, 0,9,0],
 	[4,2,1, 9,8,0, 5,0,7]
 ]
 
@@ -72,7 +72,6 @@ def check(puzzle):
 							# print("R33C[i] = " + str(r33coordinates[i]) + "   C33C[j] = " + str(c33coordinates[j]))
 							# print("puzzle[r33i,c33j] = " + str(puzzle[r33coordinates[i]][c33coordinates[j]]))
 							return False
-						
 	return True
 
 def fillOneEmpty(puzzle):
@@ -80,7 +79,7 @@ def fillOneEmpty(puzzle):
 	global flag
 	flag = 0 # Promena globalne promenljive
 	zeroPositions = [0,0]
-	
+
 	# Provera za redove
 	for i in range(9):
 		zeroCounter = 0
@@ -95,15 +94,17 @@ def fillOneEmpty(puzzle):
 				# print("Numbers list" + str(numbersList))
 				# print("Broj koji se brise: " + str(puzzle[i][j]))
 				numbersList.remove(puzzle[i][j]) # brise broj iz liste na osnovu vrednosti
-		print("Broj nula = " + str(zeroCounter))
+		# print("Broj nula = " + str(zeroCounter))
 		if zeroCounter != 1:
 			continue
-		else: # ovde udje ako ima jednu nulu u redu
+		else:
 			flag = 1
-			# print("Broj koji se upisuje u jedino prazno mesto: " + str(numbersList))
 			puzzle[zeroPositions[0]][zeroPositions[1]] = numbersList[0]
+			print("Inserted " + str(numbersList[0]) + " into the puzzle on (" + str(zeroPositions[0] + 1) + "," + str(zeroPositions[1] + 1) + ")")
 			# print("3. red puzle: " + str(puzzle[2]))
+	
 	# Provera za kolone
+	
 
 	# Provera za grid
 
