@@ -76,40 +76,43 @@ def check(puzzle):
 	return True
 
 def fillOneEmpty(puzzle):
-	flag = 0
+	# Svaka globalna promenljiva koja se koristi mora da ima global imePromenljive na pocetku funkcije
+	global flag
+	flag = 0 # Promena globalne promenljive
 	zeroPositions = [0,0]
-	#treba provera za redove
+	
+	# Provera za redove
 	for i in range(9):
-		print("Flag: " + str(flag))
 		zeroCounter = 0
 		numbersList = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 		for j in range(9):
-			#print("Puzzle i i jot: " + str(puzzle[i][j]))
+			# print("Puzzle i i jot: " + str(puzzle[i][j]))
 			if puzzle[i][j] == 0:
 				zeroCounter += 1
 				zeroPositions[0] = i # ako ima 2 nule, desice se overwrite, medjutim nije toliko bitno jer svakako ima continue i preskocice se
 				zeroPositions[1] = j # a ako ima 1 nula, dobijamo indekse te nule i to nam treba
 			else:
-				print("Numbers list" + str(numbersList))
-				print("Broj koji se brise: " + str(puzzle[i][j]))
+				# print("Numbers list" + str(numbersList))
+				# print("Broj koji se brise: " + str(puzzle[i][j]))
 				numbersList.remove(puzzle[i][j]) # brise broj iz liste na osnovu vrednosti
-		print(zeroCounter)		
+		print("Broj nula = " + str(zeroCounter))
 		if zeroCounter != 1:
 			continue
 		else: # ovde udje ako ima jednu nulu u redu
 			flag = 1
-			print("Numbers list" + str(numbersList))
+			# print("Broj koji se upisuje u jedino prazno mesto: " + str(numbersList))
 			puzzle[zeroPositions[0]][zeroPositions[1]] = numbersList[0]
-			print("3. red puzle: " + str(puzzle[2])) 
-			continue
-	#treba provera za kolone
-	#treba provera za grid
+			# print("3. red puzle: " + str(puzzle[2]))
+	# Provera za kolone
+
+	# Provera za grid
 
 # Trazi redom koje je prvo mesto matrice koje je prazno, za backtracking
 def findFree(puzzle):
-	return
+	pass
 
 def solve(puzzle):
+	global flag
 	# Prvo je provera da li je uneseni sudoku ispravan
 	if(check(puzzle) == False):
 		print("The input puzzle is incorrect.")
@@ -117,6 +120,5 @@ def solve(puzzle):
 		print("The input puzzle is correct.")
 		while flag == 1:
 			fillOneEmpty(puzzle)
-			print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
 		
 solve(puzzle)
