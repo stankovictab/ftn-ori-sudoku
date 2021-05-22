@@ -25,7 +25,7 @@ def check(puzzle):
 	for r in range(9): # od 0 do 8   
 		for c in range(9):
 			selected = puzzle[r][c] # r i c su indeksi selektovanog elementa
-			print(selected)
+			# print(selected)
 			if(selected != 0):
 				# Provera po koloni, inkrementuje se row
 				for i in range(9):
@@ -41,8 +41,8 @@ def check(puzzle):
 						return False
 				# Provera po 3x3
 				# Treba da nadje u kom je segmentu po modulu, i po row i po col, pa da proveri sve u tom segmentu osim samog selektovanog
-				print("R = " + str(r) + "   R mod 3 = " + str(math.floor(r / 3)))
-				print("C = " + str(c) + "   C mod 3 = " + str(math.floor(c / 3)))
+				# print("R = " + str(r) + "   R mod 3 = " + str(math.floor(r / 3)))
+				# print("C = " + str(c) + "   C mod 3 = " + str(math.floor(c / 3)))
 				# Koordinate sekcije, moze biti 0, 1 ili 2
 				r33 = math.floor(r / 3)
 				c33 = math.floor(c / 3)
@@ -78,35 +78,69 @@ def fillOneEmpty(puzzle):
 	# Svaka globalna promenljiva koja se koristi mora da ima global imePromenljive na pocetku funkcije
 	global flag
 	flag = 0 # Promena globalne promenljive
-	zeroPositions = [0,0]
+	zeroPosition = [0,0]
 
 	# Provera za redove
 	for i in range(9):
 		zeroCounter = 0
 		numbersList = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 		for j in range(9):
-			# print("Puzzle i i jot: " + str(puzzle[i][j]))
 			if puzzle[i][j] == 0:
 				zeroCounter += 1
-				zeroPositions[0] = i # ako ima 2 nule, desice se overwrite, medjutim nije toliko bitno jer svakako ima continue i preskocice se
-				zeroPositions[1] = j # a ako ima 1 nula, dobijamo indekse te nule i to nam treba
+				# Cim nadje nulu pamti indekse tog elementa za upis novog, iako ce se ovi indeksi mozda overwrite-ovati ako ima 2 ili vise nula
+				zeroPosition[0] = i
+				zeroPosition[1] = j
 			else:
-				# print("Numbers list" + str(numbersList))
-				# print("Broj koji se brise: " + str(puzzle[i][j]))
-				numbersList.remove(puzzle[i][j]) # brise broj iz liste na osnovu vrednosti
-		# print("Broj nula = " + str(zeroCounter))
+				numbersList.remove(puzzle[i][j])
+		# Ako u redu ima samo jedna nula, upisuje se nedostajuci broj u to polje
 		if zeroCounter != 1:
 			continue
 		else:
 			flag = 1
-			puzzle[zeroPositions[0]][zeroPositions[1]] = numbersList[0]
-			print("Inserted " + str(numbersList[0]) + " into the puzzle on (" + str(zeroPositions[0] + 1) + "," + str(zeroPositions[1] + 1) + ")")
-			# print("3. red puzle: " + str(puzzle[2]))
+			puzzle[zeroPosition[0]][zeroPosition[1]] = numbersList[0]
+			print("Inserted " + str(numbersList[0]) + " into the puzzle on (" + str(zeroPosition[0] + 1) + "," + str(zeroPosition[1] + 1) + ") by rows.")
 	
 	# Provera za kolone
-	
+	for j in range(9):
+		zeroCounter = 0
+		numbersList = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+		for i in range(9):
+			if puzzle[i][j] == 0:
+				zeroCounter += 1
+				zeroPosition[0] = i
+				zeroPosition[1] = j
+			else:
+				numbersList.remove(puzzle[i][j])
+		if zeroCounter != 1:
+			continue
+		else:
+			flag = 1
+			puzzle[zeroPosition[0]][zeroPosition[1]] = numbersList[0]
+			print("Inserted " + str(numbersList[0]) + " into the puzzle on (" + str(zeroPosition[0] + 1) + "," + str(zeroPosition[1] + 1) + ") by columns.")
 
 	# Provera za grid
+	for sectionNum in range(9):
+		zeroCounter = 0
+		numbersList = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+		for elemNum in range(9):
+			# print("Section: " + str(sectionNum) + " Elem: " + str(elemNum))
+			xOffset = math.floor(elemNum / 3)
+			yOffset = elemNum % 3
+			x = xOffset + 3 * (math.floor(sectionNum / 3))
+			y = yOffset + 3 * (sectionNum % 3)
+			if puzzle[x][y] == 0:
+				zeroCounter += 1
+				zeroPosition[0] = x
+				zeroPosition[1] = y
+			else:
+				numbersList.remove(puzzle[x][y])
+		if zeroCounter != 1:
+			continue
+		else:
+			flag = 1
+			puzzle[zeroPosition[0]][zeroPosition[1]] = numbersList[0]
+			print("Inserted " + str(numbersList[0]) + " into the puzzle on (" + str(zeroPosition[0] + 1) + "," + str(zeroPosition[1] + 1) + ") by 3x3.")
+
 
 # Trazi redom koje je prvo mesto matrice koje je prazno, za backtracking
 def findFree(puzzle):
@@ -123,3 +157,7 @@ def solve(puzzle):
 			fillOneEmpty(puzzle)
 		
 solve(puzzle)
+
+# Print sudoku-a
+for i in range(9):
+	print(puzzle[i])
