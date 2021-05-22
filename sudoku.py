@@ -55,10 +55,10 @@ def check(puzzle):
 				c33coordinates[1] = c33 * 3 + 1
 				c33coordinates[2] = c33 * 3 + 2
 				
-				for i in r33coordinates:
-					print("R33 Element: " + str(i))
-				for i in c33coordinates:
-					print("C33 Element: " + str(i))
+				# for i in r33coordinates:
+				# 	print("R33 Element: " + str(i))
+				# for i in c33coordinates:
+				# 	print("C33 Element: " + str(i))
 
 				for i in range(3): # od 0 do 2
 					for j in range(3):
@@ -72,31 +72,30 @@ def check(puzzle):
 							# print("R33C[i] = " + str(r33coordinates[i]) + "   C33C[j] = " + str(c33coordinates[j]))
 							# print("puzzle[r33i,c33j] = " + str(puzzle[r33coordinates[i]][c33coordinates[j]]))
 							return False
-                        
+						
 	return True
 
 def fillOneEmpty(puzzle):
-    flag = 0
-    zeroPositions = [0,0]
-    numbersList = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-    #treba provera za redove
-    zeroCounter = 0
-    for i in range(9):
-        for j in range(9):
-            numbersList.remove(puzzle[i][j]) # brise broj iz liste na osnovu vrednosti
-            if puzzle[i][j] == 0:
-                zeroCounter += 1
-                zeroPositions[0] = i # ako ima 2 nule, desice se overwrite, medjutim nije toliko bitno jer svakako ima continue i preskocice se
-                zeroPositions[1] = j # a ako ima 1 nula, dobijamo indekse te nule i to nam treba
-        if zeroCounter != 1:
-            continue
-        else:
-            flag = 1
-            print("Numbers list" + numbersList)
-            puzzle[zeroPositions[0]][zeroPositions[1]] = numbersList[0]
-    #treba provera za kolone
-    #treba provera za grid
-    
+	flag = 0
+	zeroPositions = [0,0]
+	numbersList = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+	#treba provera za redove
+	zeroCounter = 0
+	for i in range(9):
+		for j in range(9):
+			numbersList.remove(puzzle[i][j]) # brise broj iz liste na osnovu vrednosti
+			if puzzle[i][j] == 0:
+				zeroCounter += 1
+				zeroPositions[0] = i # ako ima 2 nule, desice se overwrite, medjutim nije toliko bitno jer svakako ima continue i preskocice se
+				zeroPositions[1] = j # a ako ima 1 nula, dobijamo indekse te nule i to nam treba
+		if zeroCounter != 1:
+			continue
+		else:
+			flag = 1
+			print("Numbers list" + numbersList)
+			puzzle[zeroPositions[0]][zeroPositions[1]] = numbersList[0]
+	#treba provera za kolone
+	#treba provera za grid
 
 # Trazi redom koje je prvo mesto matrice koje je prazno, za backtracking
 def findFree(puzzle):
@@ -108,8 +107,7 @@ def solve(puzzle):
 		print("The input puzzle is incorrect.")
 	else:
 		print("The input puzzle is correct.")
-        while flag == 1:
-            fillOneEmpty(puzzle)
-        
-
+		while flag == 1 :
+			fillOneEmpty(puzzle)
+		
 solve(puzzle)
