@@ -141,37 +141,75 @@ def fillOneEmpty(puzzle):
 			puzzle[zeroPosition[0]][zeroPosition[1]] = numbersList[0]
 			print("Inserted " + str(numbersList[0]) + " into the puzzle on (" + str(zeroPosition[0] + 1) + "," + str(zeroPosition[1] + 1) + ") by 3x3.")
 
-
 # Trazi redom koje je prvo mesto matrice koje je prazno, za backtracking
 def findZero(puzzle):
-	for i in range(9): # treba da prodje kroz redove da bi nasao nule
-		for j in range(9): # treba da prodje kroz sve elemente reda
+	for i in range(9): # Treba da prodje kroz redove da bi nasao nule
+		for j in range(9): # Treba da prodje kroz sve elemente reda
 			if puzzle[i][j] == 0:
 				return (i,j)
-		
 		
 def fillFirstZero(puzzle):
 	x, y = findZero(puzzle)
 	numbersList = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-	# Brise elemente koji se vec nalaze u datom redu
+	
+	# Provera po redu
 	for i in range(9):
 		if puzzle[x][i] != 0:
 			numbersList.remove(puzzle[x][i])
-			
 	print("Ostatak elemenata: " + str(numbersList))
-				
-	
-		
+	if len(numbersList) == 1:
+		puzzle[x][y] = numbersList[0] # Da prekrati muke
+		print("Inserted " + str(numbersList[0]) + " into the puzzle on (" + str(x + 1) + "," + str(y + 1) + ") by backtracking.")
+		return
+
+	# Provera po koloni
+	for j in range(9):
+		if puzzle[j][y] != 0 and puzzle[j][y] in numbersList:
+			numbersList.remove(puzzle[j][y])
+	print("Ostatak elemenata: " + str(numbersList))
+	if len(numbersList) == 1:
+		puzzle[x][y] = numbersList[0] # Da prekrati muke
+		print("Inserted " + str(numbersList[0]) + " into the puzzle on (" + str(x + 1) + "," + str(y + 1) + ") by backtracking.")
+		return
+
+	# Provera po 3x3
+	sectionX = math.floor(x / 3) # elemX = sectionX * 3
+	sectionY = math.floor(y / 3) # elemY = sectionY * 3 # print("ElemX: " + str(elemX) + "  ElemY: " + str(elemY))
+	dim = 3 # Za sad
+	sectionNum = sectionX * dim + sectionY # Ide od nule # (2,1), 3x3, => 3+3+2 = x*dim + y
+	for elemNum in range(9):
+		# print("Section: " + str(sectionNum) + " Elem: " + str(elemNum))
+		xOffset = math.floor(elemNum / 3)
+		yOffset = elemNum % 3
+		x = xOffset + 3 * (math.floor(sectionNum / 3))
+		y = yOffset + 3 * (sectionNum % 3)
+		if puzzle[x][y] != 0 and puzzle[x][y] in numbersList:
+			numbersList.remove(puzzle[x][y])
+	# Nebitno je koliko imamo elemenata u listi, pisemo prvi po backtracking principu
+	print("Ostatak elemenata: " + str(numbersList))
+	puzzle[x][y] = numbersList[0] # Pocetak backtracking-a
+	print("Inserted " + str(numbersList[0]) + " into the puzzle on (" + str(x + 1) + "," + str(y + 1) + ") by backtracking.")
 
 def solve(puzzle):
 	global flag
+	# global puzzle?
 	# Prvo je provera da li je uneseni sudoku ispravan
 	if(check(puzzle) == False):
 		print("The input puzzle is incorrect.")
 	else:
 		print("The input puzzle is correct.")
+		# Nastavak rada
 		while flag == 1:
 			fillOneEmpty(puzzle)
+		fillFirstZero(puzzle)
+		flag = 1
+		while flag == 1:
+			fillOneEmpty(puzzle)
+		fillFirstZero(puzzle)
+		# TREBA DA RADI CHECK I DA KAZE DA TO NIJE DOBRO, I DA UPISE SLEDECI SLOBODAN BROJ IZ LISTE
+		# Ovo treba da bude u nekom while-u, i ako propadne sudoku, uzima sledeci element iz one liste
+		# Za svako mesto na kojem moze da se radi backtrack, mora da se pamti lista svih mogucih brojeva, i lista brojeva koja je do tad isprobavana
+
 		
 solve(puzzle)
 
