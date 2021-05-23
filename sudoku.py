@@ -202,10 +202,11 @@ def fillFirstZero(puzzle):
 			testPuzzle = copy.deepcopy(puzzle)
 			if len(dict[(x,y)]) == 0:
 				# Ovo je slucaj gde moramo da backtrack-ujemo, jer to znaci da vec postoji isti broj u redu / koloni / 3x3
-				return ("failed", x, y, xNew, yNew)
+				return ("emptyDict", x, y, xNew, yNew)
 			testPuzzle[xNew][yNew] = dict[(x,y)][0]
 			if check(testPuzzle) == True:
 				puzzle[xNew][yNew] = dict[(x,y)][0]
+				positionStack.append((x,y)) #stavlja na kraj
 				print("Inserted " + str(dict[(x,y)][0]) + " into the puzzle on (" + str(x) + "," + str(y) + ") by backtracking 3X3.")
 				dict[(x,y)].pop(0)
 				return ("tried", x, y, xNew, yNew)
@@ -214,11 +215,14 @@ def fillFirstZero(puzzle):
 				puzzle[xNew][yNew] = 0 # Nepotrebno?
 				for i in dict:
 					print(dict[i])
-				return ("failed", x, y, xNew, yNew)
+				return ("failedCheck", x, y, xNew, yNew)
 
-def goToPreviousAndReplace(x, y):
-	# puzzle[x][y] = dict[(x,y)][0]
-	puzzle[x][y] = 69
+def goToPreviousAndReplace():
+	(x,y) = positionStack.pop() # uzima sa kraja
+	puzzle[x][y] = dict[(x,y)][0]
+	dict[(x,y)].pop(0)
+	
+	# puzzle[x][y] = 69
 
 def solve(puzzle):
 	global flag
@@ -242,21 +246,18 @@ def solve(puzzle):
 			while flag == 1:
 				fillOneEmpty(puzzle)
 		#################
-		# while check(puzzle) == True:  # ?????????? Sve dok u sudoku postoje nule da radi ovo gore?
-		returnElements = fillFirstZero(puzzle)
-		status = returnElements[0]
-		x = returnElements[1]
-		y = returnElements[2]
-		if status == "failed":
-			goToPreviousAndReplace(x, y)
+		while check(puzzle) == True:  # ?????????? Sve dok u sudoku postoje nule da radi ovo gore?
+			returnElements = fillFirstZero(puzzle)
+			status = returnElements[0]
+			if status == "emptyDict" or status == "failedCheck":
+				goToPreviousAndReplace()
+# =============================================================================
+# 		returnElements = fillFirstZero(puzzle)
+# 		status = returnElements[0]
+# 		if status == "failed":
+# 			goToPreviousAndReplace()
+# =============================================================================
 		#################
-		returnElements = fillFirstZero(puzzle)
-		status = returnElements[0]
-		x = returnElements[1]
-		y = returnElements[2]
-		if status == "failed":
-			goToPreviousAndReplace(x, y)
-
 
 		# TREBA DA RADI CHECK I DA KAZE DA TO NIJE DOBRO, I DA UPISE SLEDECI SLOBODAN BROJ IZ LISTE
 		# Ovo treba da bude u nekom while-u, i ako propadne sudoku, uzima sledeci element iz one liste
