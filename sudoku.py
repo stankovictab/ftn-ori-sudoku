@@ -2,7 +2,8 @@ import math
 import copy
 
 flag = 1
-recnik = {}
+dict = {} # Position <-> List of elements available to set (numbersList)
+positionStack = []
 
 # 0 su prazna mesta
 puzzle = [
@@ -100,7 +101,7 @@ def fillOneEmpty(puzzle):
 		else:
 			flag = 1
 			puzzle[zeroPosition[0]][zeroPosition[1]] = numbersList[0]
-			print("Inserted " + str(numbersList[0]) + " into the puzzle on (" + str(zeroPosition[0] + 1) + "," + str(zeroPosition[1] + 1) + ") by rows.")
+			print("Inserted " + str(numbersList[0]) + " into the puzzle on (" + str(zeroPosition[0]) + "," + str(zeroPosition[1]) + ") by rows.")
 	
 	# Provera za kolone
 	for j in range(9):
@@ -119,7 +120,7 @@ def fillOneEmpty(puzzle):
 		else:
 			flag = 1
 			puzzle[zeroPosition[0]][zeroPosition[1]] = numbersList[0]
-			print("Inserted " + str(numbersList[0]) + " into the puzzle on (" + str(zeroPosition[0] + 1) + "," + str(zeroPosition[1] + 1) + ") by columns.")
+			print("Inserted " + str(numbersList[0]) + " into the puzzle on (" + str(zeroPosition[0]) + "," + str(zeroPosition[1]) + ") by columns.")
 
 	# Provera za 3x3
 	for sectionNum in range(9):
@@ -142,7 +143,7 @@ def fillOneEmpty(puzzle):
 		else:
 			flag = 1
 			puzzle[zeroPosition[0]][zeroPosition[1]] = numbersList[0]
-			print("Inserted " + str(numbersList[0]) + " into the puzzle on (" + str(zeroPosition[0] + 1) + "," + str(zeroPosition[1] + 1) + ") by 3x3.")
+			print("Inserted " + str(numbersList[0]) + " into the puzzle on (" + str(zeroPosition[0]) + "," + str(zeroPosition[1]) + ") by 3x3.")
 
 # Trazi redom koje je prvo mesto matrice koje je prazno, za backtracking
 def findZero(puzzle):
@@ -152,26 +153,24 @@ def findZero(puzzle):
 				return (i,j)
 		
 def fillFirstZero(puzzle):
-# def fillFirstZero(puzzle, x, y): # x i y dobija iz findZero() iz main-a
 	x, y = findZero(puzzle) # Koordinate nule po kojoj se radi backtracking
-	recnik[(x,y)] = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-	# numbersList = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+	dict[(x,y)] = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 	
 	# Provera po redu
 	for i in range(9):
-		if puzzle[x][i] != 0 and puzzle[x][i] in recnik[(x,y)]:
-			recnik[(x,y)].remove(puzzle[x][i])
-	print("Ostatak elemenata na (" + str(x) + "," + str(y) + ") po fillFirstZero po redu je : " + str(recnik[(x,y)]))
+		if puzzle[x][i] != 0 and puzzle[x][i] in dict[(x,y)]:
+			dict[(x,y)].remove(puzzle[x][i])
+	print("Ostatak elemenata na (" + str(x) + "," + str(y) + ") po fillFirstZero po redu je : " + str(dict[(x,y)]))
 	# Nikad nece biti len(numbersList) == 1 zbog fillOneEmpty()
 
 	# Provera po koloni
 	for j in range(9):
-		if puzzle[j][y] != 0 and puzzle[j][y] in recnik[(x,y)]:
-			recnik[(x,y)].remove(puzzle[j][y])
-	print("Ostatak elemenata na (" + str(x) + "," + str(y) + ") po fillFirstZero po koloni je : " + str(recnik[(x,y)]))
-	if len(recnik[(x,y)]) == 1:
-		puzzle[x][y] = recnik[(x,y)][0] # Da prekrati muke
-		print("Inserted " + str(recnik[(x,y)][0]) + " into the puzzle on (" + str(x + 1) + "," + str(y + 1) + ") by backtracking COL.")
+		if puzzle[j][y] != 0 and puzzle[j][y] in dict[(x,y)]:
+			dict[(x,y)].remove(puzzle[j][y])
+	print("Ostatak elemenata na (" + str(x) + "," + str(y) + ") po fillFirstZero po koloni je : " + str(dict[(x,y)]))
+	if len(dict[(x,y)]) == 1:
+		puzzle[x][y] = dict[(x,y)][0] # Da prekrati muke
+		print("Inserted " + str(dict[(x,y)][0]) + " into the puzzle on (" + str(x) + "," + str(y) + ") by backtracking COL.")
 		return "ideal"
 
 	# Provera po 3x3
@@ -179,35 +178,47 @@ def fillFirstZero(puzzle):
 	sectionY = math.floor(y / 3) # elemY = sectionY * 3 # print("ElemX: " + str(elemX) + "  ElemY: " + str(elemY))
 	dim = 3 # Za sad
 	sectionNum = sectionX * dim + sectionY # Ide od nule # (2,1), 3x3, => 3+3+2 = x*dim + y
+	# X i Y NISU ISTI, MOZDA PRAVI PROBLEM
+	# IPAK MISLIM DA SU ISTI
 	for elemNum in range(9):
 		# print("Section: " + str(sectionNum) + " Elem: " + str(elemNum))
 		xOffset = math.floor(elemNum / 3)
 		yOffset = elemNum % 3
 		xNew = xOffset + 3 * (math.floor(sectionNum / 3))
 		yNew = yOffset + 3 * (sectionNum % 3)
-		# X i Y NISU ISTI, MOZDA PRAVI PROBLEM
-		if puzzle[xNew][yNew] != 0 and puzzle[xNew][yNew] in recnik[(x,y)]:
-			recnik[(x,y)].remove(puzzle[xNew][yNew])
+		if puzzle[xNew][yNew] != 0 and puzzle[xNew][yNew] in dict[(x,y)]:
+			dict[(x,y)].remove(puzzle[xNew][yNew])
+	print("Ostatak elemenata na (" + str(x) + "," + str(y) + ") po fillFirstZero po 3x3 je : " + str(dict[(x,y)]))
+	for elemNum in range(9):
+		# print("Section: " + str(sectionNum) + " Elem: " + str(elemNum))
+		xOffset = math.floor(elemNum / 3)
+		yOffset = elemNum % 3
+		xNew = xOffset + 3 * (math.floor(sectionNum / 3))
+		yNew = yOffset + 3 * (sectionNum % 3)
 		# Nebitno je koliko imamo elemenata u listi, pisemo prvi po backtracking principu
 		if puzzle[xNew][yNew] == 0: # x i y vise nisu isti kao pre, ovde ide element po element u 3x3, ali jesu koordinate nule
-			print("Ostatak elemenata na (" + str(x) + "," + str(y) + ") po fillFirstZero po 3x3 je : " + str(recnik[(x,y)]))
 			# Nije htelo dobro ni testPuzzle = puzzle (default je po referenci), ni = puzzle.copy(), ni = puzzle[:]
 			# Mora da se importuje "copy", pa da se koristi ova funkcija
 			testPuzzle = copy.deepcopy(puzzle)
-			testPuzzle[xNew][yNew] = recnik[(x,y)][0]
+			if len(dict[(x,y)]) == 0:
+				# Ovo je slucaj gde moramo da backtrack-ujemo, jer to znaci da vec postoji isti broj u redu / koloni / 3x3
+				return ("failed", x, y, xNew, yNew)
+			testPuzzle[xNew][yNew] = dict[(x,y)][0]
 			if check(testPuzzle) == True:
-				puzzle[xNew][yNew] = recnik[(x,y)][0]
-				print("Inserted " + str(recnik[(x,y)][0]) + " into the puzzle on (" + str(x + 1) + "," + str(y + 1) + ") by backtracking 3X3.")
-				recnik[(x,y)].pop(0)
+				puzzle[xNew][yNew] = dict[(x,y)][0]
+				print("Inserted " + str(dict[(x,y)][0]) + " into the puzzle on (" + str(x) + "," + str(y) + ") by backtracking 3X3.")
+				dict[(x,y)].pop(0)
+				return ("tried", x, y, xNew, yNew)
 			else:
-				print("AAAAAAAAAAAAAAAAAAAAAAAA")
-				puzzle[xNew][yNew] = 0
-				for i in recnik:
-					print(recnik[i])
-				# goToPreviousAndReplace(x, y)
-				
-	# Trenutna verzija radi da ubaci 4 na mesto (3, 6) a proverava 3x3 i ne bi trebalo tako
-	# Ako dodamo proveru da li je trenutni broj 0 i na to mesto dodamo prvi broj, pa obrisemo taj broj iz liste preko popa, radi kako treba	
+				print("Failed, printing...")
+				puzzle[xNew][yNew] = 0 # Nepotrebno?
+				for i in dict:
+					print(dict[i])
+				return ("failed", x, y, xNew, yNew)
+
+def goToPreviousAndReplace(x, y):
+	# puzzle[x][y] = dict[(x,y)][0]
+	puzzle[x][y] = 69
 
 def solve(puzzle):
 	global flag
@@ -219,7 +230,7 @@ def solve(puzzle):
 		print("The input puzzle is correct.")
 		# Nastavak rada
 		# Gleda da li moze trivijalno ubacivanje jednog elementa da uradi, sto se radi po flag-u
-		# Kada ne moze vise, radi fillFirstZero koji ubacuje prvi element iz numbersListe u recniku
+		# Kada ne moze vise, radi fillFirstZero koji ubacuje prvi element iz numbersListe u dictu
 		while flag == 1:
 			fillOneEmpty(puzzle)
 		sign = fillFirstZero(puzzle)
@@ -230,13 +241,23 @@ def solve(puzzle):
 			flag = 1
 			while flag == 1:
 				fillOneEmpty(puzzle)
-		fillFirstZero(puzzle)
-		
-		
-		# Sve dok u sudoku postoje nule da radi ovo gore?
-		
-		
-		
+		#################
+		# while check(puzzle) == True:  # ?????????? Sve dok u sudoku postoje nule da radi ovo gore?
+		returnElements = fillFirstZero(puzzle)
+		status = returnElements[0]
+		x = returnElements[1]
+		y = returnElements[2]
+		if status == "failed":
+			goToPreviousAndReplace(x, y)
+		#################
+		returnElements = fillFirstZero(puzzle)
+		status = returnElements[0]
+		x = returnElements[1]
+		y = returnElements[2]
+		if status == "failed":
+			goToPreviousAndReplace(x, y)
+
+
 		# TREBA DA RADI CHECK I DA KAZE DA TO NIJE DOBRO, I DA UPISE SLEDECI SLOBODAN BROJ IZ LISTE
 		# Ovo treba da bude u nekom while-u, i ako propadne sudoku, uzima sledeci element iz one liste
 		# Za svako mesto na kojem moze da se radi backtrack, mora da se pamti lista svih mogucih brojeva, i lista brojeva koja je do tad isprobavana
