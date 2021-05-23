@@ -200,29 +200,60 @@ def fillFirstZero(puzzle):
 			# Nije htelo dobro ni testPuzzle = puzzle (default je po referenci), ni = puzzle.copy(), ni = puzzle[:]
 			# Mora da se importuje "copy", pa da se koristi ova funkcija
 			testPuzzle = copy.deepcopy(puzzle)
+
+
+
+
+
+
+			# U goToPrevious() u else-u treba da ima postavljanje nule na (3,6)
+			# To (3,6) treba da bude vraceno od strane return u emptyDict
+			# ALI GDE JE
+
+
+
+
+
+
+			print("DICT(X,Y): " + str(dict[(x,y)]))
 			if len(dict[(x,y)]) == 0:
 				# Ovo je slucaj gde moramo da backtrack-ujemo, jer to znaci da vec postoji isti broj u redu / koloni / 3x3
+				print("EMPTY DICT RETURNED X: " + str(x))
+				print("EMPTY DICT RETURNED Y: " + str(y))
 				return ("emptyDict", x, y, xNew, yNew)
 			testPuzzle[xNew][yNew] = dict[(x,y)][0]
 			if check(testPuzzle) == True:
 				puzzle[xNew][yNew] = dict[(x,y)][0]
-				positionStack.append((x,y)) #stavlja na kraj
+				positionStack.append((x,y)) # Stavlja na kraj
 				print("Inserted " + str(dict[(x,y)][0]) + " into the puzzle on (" + str(x) + "," + str(y) + ") by backtracking 3X3.")
 				dict[(x,y)].pop(0)
 				return ("tried", x, y, xNew, yNew)
 			else:
 				print("Failed, printing...")
-				puzzle[xNew][yNew] = 0 # Nepotrebno?
+				puzzle[xNew][yNew] = 0 
+				print("Inserted 0 into the puzzle on (" + str(xNew) + "," + str(yNew) + ") by FAILED.")
 				for i in dict:
 					print(dict[i])
 				return ("failedCheck", x, y, xNew, yNew)
 
-def goToPreviousAndReplace():
-	(x,y) = positionStack.pop() # uzima sa kraja
-	puzzle[x][y] = dict[(x,y)][0]
-	dict[(x,y)].pop(0)
-	
-	# puzzle[x][y] = 69
+def goToPreviousAndReplace(oldX, oldY):
+	(x,y) = positionStack.pop() # Uzima sa kraja
+	# Da li moze da bude prazna lista u dict-u kad udje ovde?
+	testPuzzle = copy.deepcopy(puzzle)
+	testPuzzle[x][y] = dict[(x,y)][0]
+	if check(testPuzzle) == True:
+		puzzle[x][y] = dict[(x,y)][0]
+		print("Inserted " + str(dict[(x,y)][0]) + " into the puzzle on (" + str(x) + "," + str(y) + ") by Previous and Replace.")
+		dict[(x,y)].pop(0)
+	else:
+		print("DJOKEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+		print("Old X: " + str(oldX))
+		print("Old Y: " + str(oldY))
+		puzzle[oldX][oldY] = 0
+		print("Inserted 0 into the puzzle on (" + str(oldX) + "," + str(oldY) + ") by GOTOPREVIOUS ELSE.") # OVO STAVI U 3,8 UMESTO U 3,6
+		# Rekurzija
+		goToPreviousAndReplace(x, y)
+		
 
 def solve(puzzle):
 	global flag
@@ -247,10 +278,14 @@ def solve(puzzle):
 				fillOneEmpty(puzzle)
 		#################
 		while check(puzzle) == True:  # ?????????? Sve dok u sudoku postoje nule da radi ovo gore?
+			for i in range(9):
+				print(puzzle[i])
 			returnElements = fillFirstZero(puzzle)
 			status = returnElements[0]
 			if status == "emptyDict" or status == "failedCheck":
-				goToPreviousAndReplace()
+				x = returnElements[1]
+				y = returnElements[2]
+				goToPreviousAndReplace(x, y)
 # =============================================================================
 # 		returnElements = fillFirstZero(puzzle)
 # 		status = returnElements[0]
@@ -268,5 +303,7 @@ def solve(puzzle):
 solve(puzzle)
 
 # Print sudoku-a
+print()
+print("FINAL:")
 for i in range(9):
 	print(puzzle[i])
