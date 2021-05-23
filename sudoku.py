@@ -1,6 +1,7 @@
 import math
 
 flag = 1
+recnik = {}
 
 # 0 su prazna mesta
 puzzle = [
@@ -20,6 +21,7 @@ puzzle = [
 # Program radi za 9x9 sudoku, ako hocemo 6x6 ili 12x12 moramo check-u da prosledimo i dimenziju da zna kako da radi
 
 # Ovo govori samo da li je sve u sudokuu uredu, ne da li moze da se resi (za sve nule ce reci da je ok)
+# Reci ce da ako ima dva ista u koloni ili redu ili 3x3 da nije dobro
 def check(puzzle):
 	# Za svaki element gleda svoj red, kolonu i 3x3
 	for r in range(9): # od 0 do 8   
@@ -79,7 +81,6 @@ def fillOneEmpty(puzzle):
 	global flag
 	flag = 0 # Promena globalne promenljive
 	zeroPosition = [0,0]
-	numbersList = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 	# Provera za redove
 	for i in range(9):
 		zeroCounter = 0
@@ -104,7 +105,6 @@ def fillOneEmpty(puzzle):
 	for j in range(9):
 		zeroCounter = 0
 		numbersList = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-		numbersBackupList = numbersList
 		for i in range(9):
 			if puzzle[i][j] == 0: # puzzle[i][j] == prvi element prvi red, prvi element drugi red...
 				zeroCounter += 1
@@ -151,19 +151,16 @@ def findZero(puzzle):
 				return (i,j)
 		
 def fillFirstZero(puzzle):
-	x, y = findZero(puzzle)
+	x, y = findZero(puzzle) # Koordinate nule po kojoj se radi backtracking
+	recnik[(x,y)] = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 	numbersList = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-	numberBackupList = numbersList
 	
 	# Provera po redu
 	for i in range(9):
-		if puzzle[x][i] != 0:
+		if puzzle[x][i] != 0 and puzzle[x][i] in numbersList:
 			numbersList.remove(puzzle[x][i])
 	print("Ostatak elemenata: " + str(numbersList))
-	if len(numbersList) == 1:
-		puzzle[x][y] = numbersList[0] # Da prekrati muke
-		print("Inserted " + str(numbersList[0]) + " into the puzzle on (" + str(x + 1) + "," + str(y + 1) + ") by backtracking ROW.")
-		return
+	# Nikad nece biti len(numbersList) == 1 zbog fillOneEmpty()
 
 	# Provera po koloni
 	for j in range(9):
@@ -188,13 +185,22 @@ def fillFirstZero(puzzle):
 		y = yOffset + 3 * (sectionNum % 3)
 		if puzzle[x][y] != 0 and puzzle[x][y] in numbersList:
 			numbersList.remove(puzzle[x][y])
-	# Nebitno je koliko imamo elemenata u listi, pisemo prvi po backtracking principu
-		if puzzle[x][y] == 0:
+		# Nebitno je koliko imamo elemenata u listi, pisemo prvi po backtracking principu
+		if puzzle[x][y] == 0: # x i y vise nisu isti kao pre, ovde ide element po element u 3x3, ali jesu koordinate nule
 			print("Ostatak elemenata: " + str(numbersList))
-			puzzle[x][y] = numbersList[0] # Pocetak backtracking-a
-			print("Inserted " + str(numbersList[0]) + " into the puzzle on (" + str(x + 1) + "," + str(y + 1) + ") by backtracking 3X3.")
-			numbersList.pop(0)
-
+			testPuzzle = puzzle
+			testPuzzle[x][y] = numbersList[0]
+			for i in range(9):
+				print(puzzle[i])
+			if check(testPuzzle) == True:
+				puzzle[x][y] = numbersList[0]
+				print("Inserted " + str(numbersList[0]) + " into the puzzle on (" + str(x + 1) + "," + str(y + 1) + ") by backtracking 3X3.")
+				numbersList.pop(0)
+			else:
+				print("AAAAAAAAAAAAAAAAAAAAAAAA")
+				puzzle[x][y] = 0
+				numbersList.pop(0)
+				
 	# Trenutna verzija radi da ubaci 4 na mesto (3, 6) a proverava 3x3 i ne bi trebalo tako
 	# Ako dodamo proveru da li je trenutni broj 0 i na to mesto dodamo prvi broj, pa obrisemo taj broj iz liste preko popa, radi kako treba	
 
@@ -210,16 +216,16 @@ def solve(puzzle):
 		while flag == 1:
 			fillOneEmpty(puzzle)
 		fillFirstZero(puzzle)
-		#flag = 1
-		#while flag == 1:
-		#	fillOneEmpty(puzzle)
-		#fillFirstZero(puzzle)
+		flag = 1
+		while flag == 1:
+			fillOneEmpty(puzzle)
+		fillFirstZero(puzzle)
 		#flag = 1
 		#while flag == 1:
 		#	fillOneEmpty(puzzle)
 		#fillFirstZero(puzzle)
 		
-		
+		# sve dok u sudoku postoje nule da radi ovo gore?
 		
 		
 		

@@ -1,8 +1,8 @@
-l = [2,3,4]
-print(len(l))
-
-#%%
-numbersList = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-numberBackupList = numbersList
-print(numberBackupList)
-	
+recnik = {}
+x = "a"
+y = "b"
+recnik[(x,y)] = [1,2]
+if x == 1:
+	recnik[(x,y)].pop(0)
+for i in recnik:
+	print(recnik[i])
