@@ -79,7 +79,7 @@ def fillOneEmpty(puzzle):
 	global flag
 	flag = 0 # Promena globalne promenljive
 	zeroPosition = [0,0]
-
+	numbersList = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 	# Provera za redove
 	for i in range(9):
 		zeroCounter = 0
@@ -104,12 +104,14 @@ def fillOneEmpty(puzzle):
 	for j in range(9):
 		zeroCounter = 0
 		numbersList = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+		numbersBackupList = numbersList
 		for i in range(9):
-			if puzzle[i][j] == 0:
+			if puzzle[i][j] == 0: # puzzle[i][j] == prvi element prvi red, prvi element drugi red...
 				zeroCounter += 1
 				zeroPosition[0] = i
 				zeroPosition[1] = j
 			else:
+				#print("TESTIRAM: " + str(puzzle[i][j])) - sesta kolona, pokusava da obrise drugu sesticu ali nema je u listi vise jer je vec obrisana i zato puca
 				numbersList.remove(puzzle[i][j])
 		if zeroCounter != 1:
 			continue
@@ -118,7 +120,7 @@ def fillOneEmpty(puzzle):
 			puzzle[zeroPosition[0]][zeroPosition[1]] = numbersList[0]
 			print("Inserted " + str(numbersList[0]) + " into the puzzle on (" + str(zeroPosition[0] + 1) + "," + str(zeroPosition[1] + 1) + ") by columns.")
 
-	# Provera za grid
+	# Provera za 3x3
 	for sectionNum in range(9):
 		zeroCounter = 0
 		numbersList = [1, 2, 3, 4, 5, 6, 7, 8, 9]
@@ -151,6 +153,7 @@ def findZero(puzzle):
 def fillFirstZero(puzzle):
 	x, y = findZero(puzzle)
 	numbersList = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+	numberBackupList = numbersList
 	
 	# Provera po redu
 	for i in range(9):
@@ -159,7 +162,7 @@ def fillFirstZero(puzzle):
 	print("Ostatak elemenata: " + str(numbersList))
 	if len(numbersList) == 1:
 		puzzle[x][y] = numbersList[0] # Da prekrati muke
-		print("Inserted " + str(numbersList[0]) + " into the puzzle on (" + str(x + 1) + "," + str(y + 1) + ") by backtracking.")
+		print("Inserted " + str(numbersList[0]) + " into the puzzle on (" + str(x + 1) + "," + str(y + 1) + ") by backtracking ROW.")
 		return
 
 	# Provera po koloni
@@ -169,7 +172,7 @@ def fillFirstZero(puzzle):
 	print("Ostatak elemenata: " + str(numbersList))
 	if len(numbersList) == 1:
 		puzzle[x][y] = numbersList[0] # Da prekrati muke
-		print("Inserted " + str(numbersList[0]) + " into the puzzle on (" + str(x + 1) + "," + str(y + 1) + ") by backtracking.")
+		print("Inserted " + str(numbersList[0]) + " into the puzzle on (" + str(x + 1) + "," + str(y + 1) + ") by backtracking COL.")
 		return
 
 	# Provera po 3x3
@@ -186,9 +189,14 @@ def fillFirstZero(puzzle):
 		if puzzle[x][y] != 0 and puzzle[x][y] in numbersList:
 			numbersList.remove(puzzle[x][y])
 	# Nebitno je koliko imamo elemenata u listi, pisemo prvi po backtracking principu
-	print("Ostatak elemenata: " + str(numbersList))
-	puzzle[x][y] = numbersList[0] # Pocetak backtracking-a
-	print("Inserted " + str(numbersList[0]) + " into the puzzle on (" + str(x + 1) + "," + str(y + 1) + ") by backtracking.")
+		if puzzle[x][y] == 0:
+			print("Ostatak elemenata: " + str(numbersList))
+			puzzle[x][y] = numbersList[0] # Pocetak backtracking-a
+			print("Inserted " + str(numbersList[0]) + " into the puzzle on (" + str(x + 1) + "," + str(y + 1) + ") by backtracking 3X3.")
+			numbersList.pop(0)
+
+	# Trenutna verzija radi da ubaci 4 na mesto (3, 6) a proverava 3x3 i ne bi trebalo tako
+	# Ako dodamo proveru da li je trenutni broj 0 i na to mesto dodamo prvi broj, pa obrisemo taj broj iz liste preko popa, radi kako treba	
 
 def solve(puzzle):
 	global flag
@@ -202,10 +210,19 @@ def solve(puzzle):
 		while flag == 1:
 			fillOneEmpty(puzzle)
 		fillFirstZero(puzzle)
-		flag = 1
-		while flag == 1:
-			fillOneEmpty(puzzle)
-		fillFirstZero(puzzle)
+		#flag = 1
+		#while flag == 1:
+		#	fillOneEmpty(puzzle)
+		#fillFirstZero(puzzle)
+		#flag = 1
+		#while flag == 1:
+		#	fillOneEmpty(puzzle)
+		#fillFirstZero(puzzle)
+		
+		
+		
+		
+		
 		# TREBA DA RADI CHECK I DA KAZE DA TO NIJE DOBRO, I DA UPISE SLEDECI SLOBODAN BROJ IZ LISTE
 		# Ovo treba da bude u nekom while-u, i ako propadne sudoku, uzima sledeci element iz one liste
 		# Za svako mesto na kojem moze da se radi backtrack, mora da se pamti lista svih mogucih brojeva, i lista brojeva koja je do tad isprobavana
