@@ -8,7 +8,7 @@ positionStack = [] # Pravimo: Lista uredjenih parova ((x,y), nacinNaKojiSeUbacio
 GTPARtestPuzzle = []
 
 # 0 su prazna mesta
-#1
+# 1 - Easy - 0.3s na DualCore sa printovima
 # puzzle = [
 # 	[8,7,4, 1,9,2, 0,0,3],
 # 	[2,3,0, 0,7,0, 8,1,9],
@@ -22,36 +22,99 @@ GTPARtestPuzzle = []
 # 	[0,8,0, 2,4,7, 0,9,0],
 # 	[4,2,1, 9,8,0, 5,0,7]
 # ]
-# 2
-# puzzle = [
-# 	[3,8,9, 2,7,0, 6,0,4],
-# 	[7,0,6, 9,1,0, 2,8,5],
-# 	[0,0,0, 8,4,0, 0,3,0],
-
-# 	[6,0,4, 3,0,2, 0,0,0],
-# 	[0,1,8, 0,0,7, 0,0,2],
-# 	[0,0,0, 6,0,0, 0,5,0],
-
-# 	[0,0,0, 7,0,0, 1,0,6],
-# 	[1,0,0, 0,0,8, 0,0,0],
-# 	[0,6,3, 0,0,0, 5,7,0]
-# ]
-# 3
+# 2 - Medium - 0.6s na DualCore sa printovima
 puzzle = [
-	[0,0,0, 7,0,0, 5,0,1],
-	[0,0,0, 2,3,9, 0,0,0],
-	[0,0,0, 5,0,0, 8,0,0],
+	[3,8,9, 2,7,0, 6,0,4],
+	[7,0,6, 9,1,0, 2,8,5],
+	[0,0,0, 8,4,0, 0,3,0],
 
-	[0,7,0, 0,0,3, 0,0,0],
-	[5,0,0, 0,6,0, 0,0,0],
-	[0,1,0, 0,0,0, 4,6,0],
+	[6,0,4, 3,0,2, 0,0,0],
+	[0,1,8, 0,0,7, 0,0,2],
+	[0,0,0, 6,0,0, 0,5,0],
 
-	[0,0,3, 0,7,0, 0,0,2],
-	[9,0,2, 0,0,0, 0,5,0],
-	[0,0,0, 0,0,0, 0,0,9]
+	[0,0,0, 7,0,0, 1,0,6],
+	[1,0,0, 0,0,8, 0,0,0],
+	[0,6,3, 0,0,0, 5,7,0]
 ]
+# 3 - Expert - 5min na DualCore sa printovima, 64s na QuadCore bez printova
+# puzzle = [
+# 	[0,0,0, 7,0,0, 5,0,1],
+# 	[0,0,0, 2,3,9, 0,0,0],
+# 	[0,0,0, 5,0,0, 8,0,0],
+
+# 	[0,7,0, 0,0,3, 0,0,0],
+# 	[5,0,0, 0,6,0, 0,0,0],
+# 	[0,1,0, 0,0,0, 4,6,0],
+
+# 	[0,0,3, 0,7,0, 0,0,2],
+# 	[9,0,2, 0,0,0, 0,5,0],
+# 	[0,0,0, 0,0,0, 0,0,9]
+# ]
+# 4 - Special
+# puzzle = [
+# 	[0,0,0, 0,0,0, 0,0,0],
+# 	[0,0,0, 0,0,3, 0,8,5],
+# 	[0,0,1, 0,2,0, 0,0,0],
+
+# 	[0,0,0, 5,0,7, 0,0,0],
+# 	[0,0,4, 0,0,0, 1,0,0],
+# 	[0,9,0, 0,0,0, 0,0,0],
+
+# 	[5,0,0, 0,0,0, 0,7,3],
+# 	[0,0,2, 0,1,0, 0,0,0],
+# 	[0,0,0, 0,4,0, 0,0,9]
+# ]
 
 # Program radi za 9x9 sudoku, ako hocemo 6x6 ili 12x12 moramo check-u da prosledimo i dimenziju da zna kako da radi
+
+# TODO:
+###########################################################################
+# def checkAtPos(puzzle, r, c):
+#         selected = puzzle[r][c] # r i c su indeksi selektovanog elementa
+#         if(selected != 0):
+#             # Provera po koloni, inkrementuje se row
+#             for i in range(9):
+#                 if(i == r):
+#                     continue
+#                 if(selected == puzzle[i][c]): # i != r znaci da preskace indeks selektovanog
+#                     return False
+#             # Provera po redu, inkrementuje se col
+#             for i in range(9):
+#                 if(i == c):
+#                     continue
+#                 if(selected == puzzle[r][i]):
+#                     return False
+
+#             r33 = math.floor(r / 3)
+#             c33 = math.floor(c / 3)
+#             r33coordinates = [0,0,0] # niz u koji smestamo indekse kolona grida u kom se nalazi trazeni broj
+#             r33coordinates[0] = r33 * 3
+#             r33coordinates[1] = r33 * 3 + 1
+#             r33coordinates[2] = r33 * 3 + 2
+#             c33coordinates = [0,0,0]
+#             c33coordinates[0] = c33 * 3
+#             c33coordinates[1] = c33 * 3 + 1
+#             c33coordinates[2] = c33 * 3 + 2
+
+#             for i in range(3): # od 0 do 2
+#                 for j in range(3):
+#                     # Preskace selektovani
+#                     if(r == r33coordinates[i] and c == c33coordinates[j]): # and mora, ne &
+#                         continue
+#                     # Ako nadje broj u sekciji koji je isti kao selektovani
+#                     if(puzzle[r33coordinates[i]][c33coordinates[j]] == selected): 
+#                         return False
+#             return True
+# # Ovo govori samo da li je sve u sudokuu uredu, ne da li moze da se resi (za sve nule ce reci da je ok)
+# # Reci ce da ako ima dva ista u koloni ili redu ili 3x3 da nije dobro
+# def check(puzzle):
+#     # Za svaki element gleda svoj red, kolonu i 3x3
+#     for r in range(9): # od 0 do 8
+#         for c in range(9):
+#             if checkAtPos(puzzle, r, c) == False:
+#                 return False
+#     return True
+#############################################################################
 
 # Ovo govori samo da li je sve u sudokuu uredu, ne da li moze da se resi (za sve nule ce reci da je ok)
 # Reci ce da ako ima dva ista u koloni ili redu ili 3x3 da nije dobro
@@ -323,13 +386,13 @@ def solve(puzzle):
 		if sign == "ideal":
 			flag = 1
 			while flag == 1:
-				fillOneEmpty(puzzle) # TODO: Da li ovo moze da se ponavlja u while-u?
-		while check(puzzle) == True:
+				fillOneEmpty(puzzle) # TODO: Da li ovo moze da se ponavlja u while-u? Treba nam rad sa stekom i sa ovim brojevima koji se dodaju, da se i oni vracaju uz backtrack
+		while check(puzzle) == True: # TODO: check() nije potreban svaki put da se radi, moze da se radi samo za dodati element, a mozda cak nije uopste potreban zbog toga kako radi fillFirstZero?
 			for i in range(9):
 				print(puzzle[i])
 			returnElements = fillFirstZero(puzzle)
 			if returnElements == None:
-				print("Izasao je iz while-a na dobar nacin") # Nema vise nula u sudoku-u
+				print("Izasao je iz while-a na dobar nacin, nema vise nula u Sudoku-u")
 				return
 			status = returnElements[0]
 			if status == "emptyDict" or status == "failedCheck":
