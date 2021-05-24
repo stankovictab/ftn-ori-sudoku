@@ -7,18 +7,47 @@ positionStack = [] # Pravimo: Lista uredjenih parova ((x,y), nacinNaKojiSeUbacio
 GTPARtestPuzzle = []
 
 # 0 su prazna mesta
+#1
+# puzzle = [
+# 	[8,7,4, 1,9,2, 0,0,3],
+# 	[2,3,0, 0,7,0, 8,1,9],
+# 	[6,1,9, 3,0,8, 4,7,2],
+
+# 	[0,0,2, 7,0,5, 0,8,0],
+# 	[7,0,0, 0,1,0, 0,2,5],
+# 	[0,5,0, 0,2,0, 7,0,0],
+
+# 	[9,6,7, 5,0,1, 2,4,8],
+# 	[0,8,0, 2,4,7, 0,9,0],
+# 	[4,2,1, 9,8,0, 5,0,7]
+# ]
+# 2
+# puzzle = [
+# 	[3,8,9, 2,7,0, 6,0,4],
+# 	[7,0,6, 9,1,0, 2,8,5],
+# 	[0,0,0, 8,4,0, 0,3,0],
+
+# 	[6,0,4, 3,0,2, 0,0,0],
+# 	[0,1,8, 0,0,7, 0,0,2],
+# 	[0,0,0, 6,0,0, 0,5,0],
+
+# 	[0,0,0, 7,0,0, 1,0,6],
+# 	[1,0,0, 0,0,8, 0,0,0],
+# 	[0,6,3, 0,0,0, 5,7,0]
+# ]
+# 3
 puzzle = [
-	[8,7,4, 1,9,2, 0,0,3],
-	[2,3,0, 0,7,0, 8,1,9],
-	[6,1,9, 3,0,8, 4,7,2],
+	[0,0,0, 7,0,0, 5,0,1],
+	[0,0,0, 2,3,9, 0,0,0],
+	[0,0,0, 5,0,0, 8,0,0],
 
-	[0,0,2, 7,0,5, 0,8,0],
-	[7,0,0, 0,1,0, 0,2,5],
-	[0,5,0, 0,2,0, 7,0,0],
+	[0,7,0, 0,0,3, 0,0,0],
+	[5,0,0, 0,6,0, 0,0,0],
+	[0,1,0, 0,0,0, 4,6,0],
 
-	[9,6,7, 5,0,1, 2,4,8],
-	[0,8,0, 2,4,7, 0,9,0],
-	[4,2,1, 9,8,0, 5,0,7]
+	[0,0,3, 0,7,0, 0,0,2],
+	[9,0,2, 0,0,0, 0,5,0],
+	[0,0,0, 0,0,0, 0,0,9]
 ]
 
 # Program radi za 9x9 sudoku, ako hocemo 6x6 ili 12x12 moramo check-u da prosledimo i dimenziju da zna kako da radi
@@ -152,8 +181,11 @@ def findZero(puzzle):
 		for j in range(9): # Treba da prodje kroz sve elemente reda
 			if puzzle[i][j] == 0:
 				return (i,j)
+	return None
 
 def fillFirstZero(puzzle):
+	if(findZero(puzzle) == None):
+		return None
 	x, y = findZero(puzzle) # Koordinate nule po kojoj se radi backtracking
 	dict[(x,y)] = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 	
@@ -169,10 +201,12 @@ def fillFirstZero(puzzle):
 		if puzzle[j][y] != 0 and puzzle[j][y] in dict[(x,y)]:
 			dict[(x,y)].remove(puzzle[j][y])
 	print("Ostatak elemenata na (" + str(x) + "," + str(y) + ") po fillFirstZero po koloni je : " + str(dict[(x,y)]))
-	if len(dict[(x,y)]) == 1:
-		puzzle[x][y] = dict[(x,y)][0] # Da prekrati muke
-		print("Inserted " + str(dict[(x,y)][0]) + " into the puzzle on (" + str(x) + "," + str(y) + ") by backtracking COL.")
-		return "ideal"
+	# GRESKA - NE MOZE DA STAVLJA AKO NE PROVERI 3X3
+	# if len(dict[(x,y)]) == 1:
+	# 	puzzle[x][y] = dict[(x,y)][0] # Da prekrati muke
+	# 	positionStack.append((x,y))
+	# 	print("Inserted " + str(dict[(x,y)][0]) + " into the puzzle on (" + str(x) + "," + str(y) + ") by backtracking COL.")
+	# 	return "ideal"
 
 	# Provera po 3x3
 	sectionX = math.floor(x / 3) # elemX = sectionX * 3
@@ -201,21 +235,6 @@ def fillFirstZero(puzzle):
 			# Nije htelo dobro ni testPuzzle = puzzle (default je po referenci), ni = puzzle.copy(), ni = puzzle[:]
 			# Mora da se importuje "copy", pa da se koristi ova funkcija
 			testPuzzle = copy.deepcopy(puzzle)
-
-
-
-
-
-
-			# U goToPrevious() u else-u treba da ima postavljanje nule na (3,6)
-			# To (3,6) treba da bude vraceno od strane return u emptyDict
-			# ALI GDE JE
-
-
-
-
-
-
 			print("DICT(X,Y): " + str(dict[(x,y)]))
 			if len(dict[(x,y)]) == 0:
 				# Ovo je slucaj gde moramo da backtrack-ujemo, jer to znaci da vec postoji isti broj u redu / koloni / 3x3
@@ -239,6 +258,15 @@ def fillFirstZero(puzzle):
 
 def goToPreviousAndReplace(oldX, oldY):
 	global GTPARtestPuzzle
+
+	# testPos, testStatus = positionStack.pop() # Pritom i skida sa steka
+	# x,y = testPos
+	# while testStatus == "ideal":
+	# 	x, y = testPos
+	# 	puzzle[x][y] = 0
+	# 	print("Inserted 0 into the puzzle on (" + str(x) + "," + str(y) + ") by GTPAR WHILE.")
+	# 	testPos, testStatus = positionStack.pop()
+
 	(x,y) = positionStack.pop() # Uzima sa kraja
 	# Da li moze da bude prazna lista u dict-u kad udje ovde?
 	GTPARtestPuzzle = copy.deepcopy(puzzle) # testPuzzle je lokalan za svaki poziv funkcije, sto nije dobro kod rekurzije
@@ -300,17 +328,15 @@ def solve(puzzle):
 			for i in range(9):
 				print(puzzle[i])
 			returnElements = fillFirstZero(puzzle)
+			if returnElements == None:
+				print("SSSSSSSSSSSSSSSSSSSSSSSS OVAKO TREBA DA ZAVRSI")
+				return
 			status = returnElements[0]
 			if status == "emptyDict" or status == "failedCheck":
 				x = returnElements[1]
 				y = returnElements[2]
 				goToPreviousAndReplace(x, y)
-# =============================================================================
-# 		returnElements = fillFirstZero(puzzle)
-# 		status = returnElements[0]
-# 		if status == "failed":
-# 			goToPreviousAndReplace()
-# =============================================================================
+		print("BABABOOEY")
 		#################
 
 		# TREBA DA RADI CHECK I DA KAZE DA TO NIJE DOBRO, I DA UPISE SLEDECI SLOBODAN BROJ IZ LISTE
