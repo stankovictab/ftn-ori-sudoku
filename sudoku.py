@@ -1,5 +1,6 @@
 import math
 import copy
+import time
 
 flag = 1
 dict = {} # Position <-> List of elements available to set (numbersList)
@@ -201,7 +202,7 @@ def fillFirstZero(puzzle):
 		if puzzle[j][y] != 0 and puzzle[j][y] in dict[(x,y)]:
 			dict[(x,y)].remove(puzzle[j][y])
 	print("Ostatak elemenata na (" + str(x) + "," + str(y) + ") po fillFirstZero po koloni je : " + str(dict[(x,y)]))
-	# GRESKA - NE MOZE DA STAVLJA AKO NE PROVERI 3X3
+	# GRESKA - NE MOZE DA STAVLJA PO COL AKO NE PROVERI 3X3
 	# if len(dict[(x,y)]) == 1:
 	# 	puzzle[x][y] = dict[(x,y)][0] # Da prekrati muke
 	# 	positionStack.append((x,y))
@@ -297,7 +298,7 @@ def goToPreviousAndReplace(oldX, oldY):
 		print("Old Y: " + str(oldY))
 		puzzle[oldX][oldY] = 0
 		GTPARtestPuzzle[x][y] = 0 # Zbog rekurzije
-		print("Inserted 0 into the puzzle on (" + str(oldX) + "," + str(oldY) + ") by GOTOPREVIOUS ELSE.") # OVO STAVI U 3,8 UMESTO U 3,6
+		print("Inserted 0 into the puzzle on (" + str(oldX) + "," + str(oldY) + ") by GOTOPREVIOUS ELSE.")
 		# Rekurzija
 		goToPreviousAndReplace(x, y)
 		
@@ -322,33 +323,24 @@ def solve(puzzle):
 		if sign == "ideal":
 			flag = 1
 			while flag == 1:
-				fillOneEmpty(puzzle)
-		#################
-		while check(puzzle) == True:  # ?????????? Sve dok u sudoku postoje nule da radi ovo gore?
+				fillOneEmpty(puzzle) # TODO: Da li ovo moze da se ponavlja u while-u?
+		while check(puzzle) == True:
 			for i in range(9):
 				print(puzzle[i])
 			returnElements = fillFirstZero(puzzle)
 			if returnElements == None:
-				print("SSSSSSSSSSSSSSSSSSSSSSSS OVAKO TREBA DA ZAVRSI")
+				print("Izasao je iz while-a na dobar nacin") # Nema vise nula u sudoku-u
 				return
 			status = returnElements[0]
 			if status == "emptyDict" or status == "failedCheck":
 				x = returnElements[1]
 				y = returnElements[2]
 				goToPreviousAndReplace(x, y)
-		print("BABABOOEY")
-		#################
+		print("Pogresno je izasao iz while-a - check() nije dobar")
 
-		# TREBA DA RADI CHECK I DA KAZE DA TO NIJE DOBRO, I DA UPISE SLEDECI SLOBODAN BROJ IZ LISTE
-		# Ovo treba da bude u nekom while-u, i ako propadne sudoku, uzima sledeci element iz one liste
-		# Za svako mesto na kojem moze da se radi backtrack, mora da se pamti lista svih mogucih brojeva, i lista brojeva koja je do tad isprobavana
-
-		# Provera da li je ceo sudoku resen je ako findFirstZero ne nadje nulu, odnosno ako vrati False, i posle toga jedan check()
-		
+startTime = time.time()
 solve(puzzle)
-
-# Print sudoku-a
-print()
 print("FINAL:")
 for i in range(9):
 	print(puzzle[i])
+print(f"Vreme potrebno: {time.time() - startTime}")
