@@ -3,7 +3,8 @@ import copy
 
 flag = 1
 dict = {} # Position <-> List of elements available to set (numbersList)
-positionStack = []
+positionStack = [] # Pravimo: Lista uredjenih parova ((x,y), nacinNaKojiSeUbacio), ako naidje na tried i ne moze, ici ce unazad, postavljace nule na sve ideal-e dok ne naidje na prethodni tried
+GTPARtestPuzzle = []
 
 # 0 su prazna mesta
 puzzle = [
@@ -151,7 +152,7 @@ def findZero(puzzle):
 		for j in range(9): # Treba da prodje kroz sve elemente reda
 			if puzzle[i][j] == 0:
 				return (i,j)
-		
+
 def fillFirstZero(puzzle):
 	x, y = findZero(puzzle) # Koordinate nule po kojoj se radi backtracking
 	dict[(x,y)] = [1, 2, 3, 4, 5, 6, 7, 8, 9]
@@ -227,7 +228,7 @@ def fillFirstZero(puzzle):
 				positionStack.append((x,y)) # Stavlja na kraj
 				print("Inserted " + str(dict[(x,y)][0]) + " into the puzzle on (" + str(x) + "," + str(y) + ") by backtracking 3X3.")
 				dict[(x,y)].pop(0)
-				return ("tried", x, y, xNew, yNew)
+				return ("tried", x, y, xNew, yNew) # Posle ovoga postavi globalni flag na 1 da zna da su svi sledeci elementi isto probni, i da pozicije treba da im budu na steku, apendovane
 			else:
 				print("Failed, printing...")
 				puzzle[xNew][yNew] = 0 
@@ -237,12 +238,29 @@ def fillFirstZero(puzzle):
 				return ("failedCheck", x, y, xNew, yNew)
 
 def goToPreviousAndReplace(oldX, oldY):
+	global GTPARtestPuzzle
 	(x,y) = positionStack.pop() # Uzima sa kraja
 	# Da li moze da bude prazna lista u dict-u kad udje ovde?
-	testPuzzle = copy.deepcopy(puzzle)
-	testPuzzle[x][y] = dict[(x,y)][0]
-	if check(testPuzzle) == True:
+	GTPARtestPuzzle = copy.deepcopy(puzzle) # testPuzzle je lokalan za svaki poziv funkcije, sto nije dobro kod rekurzije
+	if len(dict[(x,y)]) == 0:
+		print("F in the chat")
+		puzzle[x][y] = 0
+		GTPARtestPuzzle[x][y] = 0 
+		# (xOld, yOld) = positionStack.pop()
+		goToPreviousAndReplace(x, y) 
+		# Kad se vrati iz poziva rekurzije, refresh-uje GTPARtestPuzzle, iako se u samom rekurzivnom pozivu on menja
+		# Zbog toga treba :
+		# GTPARtestPuzzle[x][y] = 0 
+		# Nije, nisu dobri x i y i treba 9 umesto 0
+	else:
+		GTPARtestPuzzle[x][y] = dict[(x,y)][0]
+		# return?
+	if check(GTPARtestPuzzle) == True: # Bitno je da gleda globalne
+		if len(dict[(x,y)]) == 0:
+			return
 		puzzle[x][y] = dict[(x,y)][0]
+		GTPARtestPuzzle[x][y] = dict[(x,y)][0] # Zbog rekurzije, mozda nebitan
+		positionStack.append((x,y))
 		print("Inserted " + str(dict[(x,y)][0]) + " into the puzzle on (" + str(x) + "," + str(y) + ") by Previous and Replace.")
 		dict[(x,y)].pop(0)
 	else:
@@ -250,6 +268,7 @@ def goToPreviousAndReplace(oldX, oldY):
 		print("Old X: " + str(oldX))
 		print("Old Y: " + str(oldY))
 		puzzle[oldX][oldY] = 0
+		GTPARtestPuzzle[x][y] = 0 # Zbog rekurzije
 		print("Inserted 0 into the puzzle on (" + str(oldX) + "," + str(oldY) + ") by GOTOPREVIOUS ELSE.") # OVO STAVI U 3,8 UMESTO U 3,6
 		# Rekurzija
 		goToPreviousAndReplace(x, y)
