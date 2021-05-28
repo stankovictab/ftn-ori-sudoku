@@ -131,9 +131,13 @@ def trivialFill(puzzle):
 		else:
 			flag = 1
 			puzzle[zeroPosition[0]][zeroPosition[1]] = numbersList[0]
-			positionStack.append((zeroPosition[0], zeroPosition[1]))
-			dict[(zeroPosition[0], zeroPosition[1])] = []
-			print("Inserted " + str(numbersList[0]) + " into the puzzle on (" + str(zeroPosition[0]) + "," + str(zeroPosition[1]) + ") by trivialFill Row.")
+			if (checkAtPos(puzzle, zeroPosition[0], zeroPosition[1]) == False):
+				puzzle[zeroPosition[0]][zeroPosition[1]] = 0
+				goToPreviousAndReplace(zeroPosition[0], zeroPosition[1])
+			else:
+				positionStack.append((zeroPosition[0], zeroPosition[1]))
+				dict[(zeroPosition[0], zeroPosition[1])] = []
+			#	print("Inserted " + str(numbersList[0]) + " into the puzzle on (" + str(zeroPosition[0]) + "," + str(zeroPosition[1]) + ") by trivialFill Row.")
 	
 	# Provera za kolone
 	for j in range(9):
@@ -152,9 +156,13 @@ def trivialFill(puzzle):
 		else:
 			flag = 1
 			puzzle[zeroPosition[0]][zeroPosition[1]] = numbersList[0]
-			positionStack.append((zeroPosition[0], zeroPosition[1]))
-			dict[(zeroPosition[0], zeroPosition[1])] = []
-			print("Inserted " + str(numbersList[0]) + " into the puzzle on (" + str(zeroPosition[0]) + "," + str(zeroPosition[1]) + ") by trivialFill Col.")
+			if (checkAtPos(puzzle, zeroPosition[0], zeroPosition[1]) == False):
+				puzzle[zeroPosition[0]][zeroPosition[1]] = 0
+				goToPreviousAndReplace(zeroPosition[0], zeroPosition[1])
+			else:
+				positionStack.append((zeroPosition[0], zeroPosition[1]))
+				dict[(zeroPosition[0], zeroPosition[1])] = []
+			#	print("Inserted " + str(numbersList[0]) + " into the puzzle on (" + str(zeroPosition[0]) + "," + str(zeroPosition[1]) + ") by trivialFill Col.")
 
 	# Provera za 3x3
 	for sectionNum in range(9):
@@ -177,9 +185,13 @@ def trivialFill(puzzle):
 		else:
 			flag = 1
 			puzzle[zeroPosition[0]][zeroPosition[1]] = numbersList[0]
-			positionStack.append((zeroPosition[0], zeroPosition[1]))
-			dict[(zeroPosition[0], zeroPosition[1])] = []
-			print("Inserted " + str(numbersList[0]) + " into the puzzle on (" + str(zeroPosition[0]) + "," + str(zeroPosition[1]) + ") by trivialFill 3x3.")
+			if (checkAtPos(puzzle, zeroPosition[0], zeroPosition[1]) == False):
+				puzzle[zeroPosition[0]][zeroPosition[1]] = 0
+				goToPreviousAndReplace(zeroPosition[0], zeroPosition[1])
+			else:
+				positionStack.append((zeroPosition[0], zeroPosition[1]))
+				dict[(zeroPosition[0], zeroPosition[1])] = []
+			#	print("Inserted " + str(numbersList[0]) + " into the puzzle on (" + str(zeroPosition[0]) + "," + str(zeroPosition[1]) + ") by trivialFill 3x3.")
 
 # Trazi redom koje je prvo mesto matrice koje je prazno, za backtracking
 def findZero(puzzle):
@@ -199,14 +211,14 @@ def fillFirstZero(puzzle):
 	for i in range(9):
 		if puzzle[x][i] != 0 and puzzle[x][i] in dict[(x,y)]:
 			dict[(x,y)].remove(puzzle[x][i])
-	print("Remaining elements on (" + str(x) + "," + str(y) + ") by fillFirstZero Row are : " + str(dict[(x,y)]))
+#	print("Remaining elements on (" + str(x) + "," + str(y) + ") by fillFirstZero Row are : " + str(dict[(x,y)]))
 	# Nikad nece biti len(numbersList) == 1 zbog trivialFill()
 
 	# Provera po koloni
 	for j in range(9):
 		if puzzle[j][y] != 0 and puzzle[j][y] in dict[(x,y)]:
 			dict[(x,y)].remove(puzzle[j][y])
-	print("Remaining elements on (" + str(x) + "," + str(y) + ") po fillFirstZero Col are : " + str(dict[(x,y)]))
+#	print("Remaining elements on (" + str(x) + "," + str(y) + ") po fillFirstZero Col are : " + str(dict[(x,y)]))
 	# Iako ima 1 preostao element, on ne moze da se doda a da se ne proveri 3x3
 
 	# Provera po 3x3
@@ -224,7 +236,7 @@ def fillFirstZero(puzzle):
 		yNew = yOffset + 3 * (sectionNum % 3)
 		if puzzle[xNew][yNew] != 0 and puzzle[xNew][yNew] in dict[(x,y)]:
 			dict[(x,y)].remove(puzzle[xNew][yNew])
-	print("Remaining elements on (" + str(x) + "," + str(y) + ") by fillFirstZero 3x3 are : " + str(dict[(x,y)]))
+#	print("Remaining elements on (" + str(x) + "," + str(y) + ") by fillFirstZero 3x3 are : " + str(dict[(x,y)]))
 	for elemNum in range(9):
 		# print("Section: " + str(sectionNum) + " Elem: " + str(elemNum))
 		xOffset = math.floor(elemNum / 3)
@@ -236,23 +248,23 @@ def fillFirstZero(puzzle):
 			# Nije htelo dobro ni testPuzzle = puzzle (default je po referenci), ni = puzzle.copy(), ni = puzzle[:]
 			# Mora da se importuje "copy", pa da se koristi ova funkcija
 			testPuzzle = copy.deepcopy(puzzle)
-			print("DICT(X,Y): " + str(dict[(x,y)]))
+		#	print("DICT(X,Y): " + str(dict[(x,y)]))
 			if len(dict[(x,y)]) == 0:
 				# Ovo je slucaj gde moramo da backtrack-ujemo, jer to znaci da vec postoji isti broj u redu / koloni / 3x3
-				print("EMPTY DICT RETURNED X: " + str(x))
-				print("EMPTY DICT RETURNED Y: " + str(y))
+			#	print("EMPTY DICT RETURNED X: " + str(x))
+			#	print("EMPTY DICT RETURNED Y: " + str(y))
 				return ("emptyDict", x, y, xNew, yNew)
 			testPuzzle[xNew][yNew] = dict[(x,y)][0]
 			if checkAtPos(testPuzzle, xNew, yNew): # Optimizacija, ne gleda check(testPuzzle)
 				puzzle[xNew][yNew] = dict[(x,y)][0]
 				positionStack.append((x,y)) # Stavlja na kraj
-				print("Inserted " + str(dict[(x,y)][0]) + " into the puzzle on (" + str(x) + "," + str(y) + ") by fillFirstZero 3x3.")
+			#	print("Inserted " + str(dict[(x,y)][0]) + " into the puzzle on (" + str(x) + "," + str(y) + ") by fillFirstZero 3x3.")
 				dict[(x,y)].pop(0)
 				return ("tried", x, y, xNew, yNew) # Posle ovoga postavi globalni flag na 1 da zna da su svi sledeci elementi isto probni, i da pozicije treba da im budu na steku, apendovane
 			else:
 				print("Failed, printing...")
 				puzzle[xNew][yNew] = 0 
-				print("Inserted 0 into the puzzle on (" + str(xNew) + "," + str(yNew) + ") by FAILED.")
+			#	print("Inserted 0 into the puzzle on (" + str(xNew) + "," + str(yNew) + ") by FAILED.")
 				for i in dict:
 					print(dict[i])
 				return ("failedCheck", x, y, xNew, yNew)
@@ -273,12 +285,12 @@ def goToPreviousAndReplace(oldX, oldY):
 		puzzle[x][y] = dict[(x,y)][0]
 		GTPARtestPuzzle[x][y] = dict[(x,y)][0] # Zbog rekurzije, mozda nebitan
 		positionStack.append((x,y))
-		print("Inserted " + str(dict[(x,y)][0]) + " into the puzzle on (" + str(x) + "," + str(y) + ") by backtracking.")
+	#	print("Inserted " + str(dict[(x,y)][0]) + " into the puzzle on (" + str(x) + "," + str(y) + ") by backtracking.")
 		dict[(x,y)].pop(0)
 	else:
 		puzzle[oldX][oldY] = 0
 		GTPARtestPuzzle[x][y] = 0 # Zbog rekurzije
-		print("Resetted 0 into the puzzle on (" + str(oldX) + "," + str(oldY) + ") for recursive backtracking.")
+	#	print("Resetted 0 into the puzzle on (" + str(oldX) + "," + str(oldY) + ") for recursive backtracking.")
 		# Rekurzija
 		goToPreviousAndReplace(x, y)
 
@@ -300,8 +312,8 @@ def solve(puzzle):
 			flag = 1
 			while flag == 1:
 				trivialFill(puzzle) # Treba nam rad sa stekom i sa ovim brojevima koji se dodaju, da se i oni vracaju uz backtrack
-			for i in range(9):
-				print(puzzle[i])
+			# for i in range(9):
+			# 	print(puzzle[i])
 			returnElements = fillFirstZero(puzzle)
 			if returnElements == None:
 				print("Nema vise nula u Sudoku-u!")
