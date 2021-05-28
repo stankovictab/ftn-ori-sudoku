@@ -2,26 +2,38 @@ import math
 import copy
 import time
 
+########################################################################################################
+# Pravljenje Sudoku-a
+
+DIFFICULTY = 0.9 # Default je 0.5
+
+import sudokuConstructor # Fajl je iz pip3 install py-sudoku ili install sudoku_py, nismo sigurni, jedina promena je _empty_cell_value = 0 (bilo je None)
+def getSudoku():
+	puzzle = sudokuConstructor.Sudoku(3).difficulty(DIFFICULTY) # Tezina je 0-1
+	return puzzle.board
+
 flag = 1
 dict = {} # Position <-> List of elements available to set (numbersList)
-positionStack = [] # Pravimo: Lista uredjenih parova ((x,y), nacinNaKojiSeUbacio), ako naidje na tried i ne moze, ici ce unazad, postavljace nule na sve ideal-e dok ne naidje na prethodni tried
+positionStack = [] # Lista uredjenih parova ((x,y), nacinNaKojiSeUbacio), ako naidje na tried i ne moze, ici ce unazad, postavljace nule na sve ideal-e dok ne naidje na prethodni tried
 GTPARtestPuzzle = []
+
+puzzle = getSudoku()
 
 # 0 su prazna mesta
 # 1 - Easy - 0.3s na DualCore sa printovima
-puzzle = [
-	[8,7,4, 1,9,2, 0,0,3],
-	[2,3,0, 0,7,0, 8,1,9],
-	[6,1,9, 3,0,8, 4,7,2],
+# puzzle = [
+# 	[8,7,4, 1,9,2, 0,0,3],
+# 	[2,3,0, 0,7,0, 8,1,9],
+# 	[6,1,9, 3,0,8, 4,7,2],
 
-	[0,0,2, 7,0,5, 0,8,0],
-	[7,0,0, 0,1,0, 0,2,5],
-	[0,5,0, 0,2,0, 7,0,0],
+# 	[0,0,2, 7,0,5, 0,8,0],
+# 	[7,0,0, 0,1,0, 0,2,5],
+# 	[0,5,0, 0,2,0, 7,0,0],
 
-	[9,6,7, 5,0,1, 2,4,8],
-	[0,8,0, 2,4,7, 0,9,0],
-	[4,2,1, 9,8,0, 5,0,7]
-]
+# 	[9,6,7, 5,0,1, 2,4,8],
+# 	[0,8,0, 2,4,7, 0,9,0],
+# 	[4,2,1, 9,8,0, 5,0,7]
+# ]
 # 2 # - Medium - 0.6s na DualCore sa printovima
 # puzzle = [
 # 	[3,8,9, 2,7,0, 6,0,4],
@@ -64,6 +76,67 @@ puzzle = [
 # 	[0,0,2, 0,1,0, 0,0,0],
 # 	[0,0,0, 0,4,0, 0,0,9]
 # ]
+
+########################################################################################################
+# PyGame Engine
+
+import pygame
+screen = pygame.display.set_mode((500, 500))
+pygame.display.set_icon(pygame.image.load('icon.png'))
+pygame.display.set_caption("Sudoku Backtrack Solver")
+pygame.font.init()
+font1 = pygame.font.SysFont("consolas", 40)
+font2 = pygame.font.SysFont("consolas", 20)
+
+screen.fill((228, 228, 250))
+
+dif = 500 / 9
+# Highlight the cell selected
+def draw_box(x, y):
+	x, y = 0, 0
+	for i in range(2):
+		pygame.draw.line(screen, (163, 126, 77), (x * dif-3, (y + i)*dif), (x * dif + dif + 3, (y + i)*dif), 7)
+		pygame.draw.line(screen, (163, 126, 77), ( (x + i)* dif, y * dif ), ((x + i) * dif, y * dif + dif), 7)   
+  
+# Function to draw required lines for making Sudoku grid         
+def draw():
+	global puzzle
+	# Draw the lines
+	for i in range (9):
+		for j in range (9):
+			if puzzle[j][i] != 0:
+  
+				# Fill blue color in already numbered grid
+				pygame.draw.rect(screen, (200, 200, 255), (i * dif, j * dif, dif + 1, dif + 1))
+  
+				# Fill gird with default numbers specified
+				text1 = font1.render(str(puzzle[j][i]), 1, (0, 0, 0))
+				screen.blit(text1, (i * dif + 15, j * dif + 15))
+	# Draw lines horizontally and verticallyto form grid           
+	for i in range(10):
+		if i % 3 == 0 :
+			thick = 7
+		else:
+			thick = 1
+		pygame.draw.line(screen, (0, 0, 0), (0, i * dif), (500, i * dif), thick)
+		pygame.draw.line(screen, (0, 0, 0), (i * dif, 0), (i * dif, 500), thick)      
+  
+# Fill value entered in cell      
+def draw_val(val, x, y):
+	x, y = 0, 0
+	text1 = font1.render(str(val), 1, (0, 0, 0))
+	screen.blit(text1, (x * dif + 15, y * dif + 15)) 
+
+draw()
+
+
+# pygame.draw.line(screen, (122, 0, 0), (0,0), (213,213), 7)
+# pygame.draw.rect(screen, (0, 153, 153), (0, 100, 200, 300))
+pygame.display.update() 
+# while True:
+time.sleep(2)
+
+########################################################################################################
 
 # Program radi za 9x9 sudoku, ako hocemo 6x6 ili 12x12 moramo check-u da prosledimo i dimenziju da zna kako da radi
 
@@ -309,3 +382,12 @@ print("FINAL:")
 for i in range(9):
 	print(puzzle[i])
 print(f"Time elapsed: {time.time() - startTime}")
+
+pygame.display.quit()
+screen = pygame.display.set_mode((500, 500))
+pygame.display.set_icon(pygame.image.load('icon.png'))
+pygame.display.set_caption("Sudoku Backtrack Solver")
+screen.fill((228, 228, 250))
+draw()
+pygame.display.update() 
+time.sleep(5)
