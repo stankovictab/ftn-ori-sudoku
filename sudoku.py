@@ -5,7 +5,7 @@ import time
 ########################################################################################################
 # Pravljenje Sudoku-a
 
-DIFFICULTY = 0.9 # Tezina sudoku-a, default je 0.5
+DIFFICULTY = 0.75 # Tezina sudoku-a, default je 0.5
 DRAWBOOL = 1 # 1 prikazuje sudoku, 0 ne
 DRAWSPEED = 0.02 # Koliko sekundi treba da ceka za ispis svakog elementa
 STARTINGELEMENTCOLOUR = 250, 132, 100
@@ -69,6 +69,8 @@ def draw():
 				# Fill grid with default numbers specified
 				text1 = font1.render(str(puzzle[j][i]), 1, (0, 0, 0))
 				screen.blit(text1, (i * dif + 15, j * dif + 15))
+			else:
+				pygame.draw.rect(screen, (255,255,255), (i * dif, j * dif, dif + 1, dif + 1))
 	for element in startingElements:
 		j = element[0]
 		i = element[1]
