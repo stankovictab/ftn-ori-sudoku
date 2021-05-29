@@ -49,7 +49,7 @@ puzzle, startingElements = getSudoku()
 import pygame
 if DRAWBOOL == 1:
 	screen = pygame.display.set_mode((500, 500))
-	pygame.display.set_icon(pygame.image.load('icon.png'))
+	pygame.display.set_icon(pygame.image.load('icon.png')) # Ili kod/icon.png ako se pokrece iz root foldera
 	pygame.display.set_caption("Sudoku Backtrack Solver")
 	pygame.font.init()
 	font1 = pygame.font.SysFont("consolas", 40)

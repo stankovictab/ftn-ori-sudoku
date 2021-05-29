@@ -1,0 +1,8 @@
+(Za kontrolu verzija je koriscen GitHub, pa su neophodni .gitignore i README.md)
+
+1. Instalirati PyGame biblioteku u environment-u u kojem bi pokretali program (neophodan je pip package installer)
+pip install pygame
+2. Instalirati numpy biblioteku na isti nacin, ali preko conda instalacije
+conda install -c anaconda numpy
+3. U sudoku.py mozete podesiti parametre programa, kao sto su tezina zagonetke, da li ce se sudoku prikazati u prozoru, brzina ispisa i boje preko globalnih konstanti na pocetku fajla
+4. Pokrenuti program preko sudoku.py unutar tog environment-a iz foldera "kod" (ako se pokrene iz root foldera, potrebno je za adresu ikonice postaviti "kod/icon.png")
