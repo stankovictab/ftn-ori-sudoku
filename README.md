@@ -1,12 +1,12 @@
 # ftn-ori-sudoku
 [Osnove Računarske Inteligencije]  
 Predmetni Projekat  
-AI Sudoku rešavac u Python-u koji radi po principima Backtracking i Depth First Search.
+AI Sudoku rešavač u Python-u koji radi po principima Backtracking i Depth First Search algoritma.\
 Q2 2021  
 
 Za kreiranje početnih sudoku zagonetki je korišćena biblioteka [py-sudoku](https://pypi.org/project/py-sudoku/).\
 Za kontrolu verzija je korišćen GitHub, pa su neophodni `.gitignore` i `README.md` fajlovi.
-## Uputstvo
+### Uputstvo
 
 1. Instalirati PyGame biblioteku u Python okruženje u kojem bi pokretali program preko pip package installer-a :\
 `pip install pygame`
