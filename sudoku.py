@@ -5,14 +5,16 @@ import time
 ########################################################################################################
 # Pravljenje Sudoku-a
 
-DIFFICULTY = 0.75 # Tezina sudoku-a, default je 0.5
-DRAWBOOL = 1 # 1 prikazuje sudoku, 0 ne
+DIFFICULTY = 0.6 # Tezina sudoku-a, default je 0.6
+DRAWBOOL = 0 # 1 prikazuje sudoku, 0 ne, default je 0
 DRAWSPEED = 0.02 # Koliko sekundi treba da ceka za ispis svakog elementa
 STARTINGELEMENTCOLOUR = 250, 132, 100
 INSERTEDELEMENTCOLOUR = 130, 215, 255
 
 # pip install pygame
-import sudokuConstructor # Fajl je iz pip3 install py-sudoku ili install sudoku_py, nismo sigurni, jedina promena je _empty_cell_value = 0 (bilo je None)
+import sudokuConstructor 
+# Fajl je iz (pip3 install) py-sudoku, 
+# jedina promena je _empty_cell_value = 0 (bilo je None)
 def getSudoku():
 	startingElements = []
 	puzzle = sudokuConstructor.Sudoku(3).difficulty(DIFFICULTY) # Tezina je 0-1
@@ -49,7 +51,7 @@ puzzle, startingElements = getSudoku()
 import pygame
 if DRAWBOOL == 1:
 	screen = pygame.display.set_mode((500, 500))
-	pygame.display.set_icon(pygame.image.load('icon.png')) # Ili kod/icon.png ako se pokrece iz root foldera
+	pygame.display.set_icon(pygame.image.load('icon.png'))
 	pygame.display.set_caption("Sudoku Backtrack Solver")
 	pygame.font.init()
 	font1 = pygame.font.SysFont("consolas", 40)
